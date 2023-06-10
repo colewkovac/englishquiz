@@ -1,40 +1,78 @@
-//Theme button //
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent form submission
 
-
-const toggleThemeButton = document.getElementById('toggleTheme');
-
-const currentTheme = localStorage.getItem('theme') || 'light-theme';
-document.body.classList.add(currentTheme);
-
-function toggleTheme() {
-  if (document.body.classList.contains('light-theme')) {
-    document.body.classList.replace('light-theme', 'dark-theme');
-    localStorage.setItem('theme', 'dark-theme');
-  } else {
-    document.body.classList.replace('dark-theme', 'light-theme');
-    localStorage.setItem('theme', 'light-theme');
-  }
-}
-
-toggleThemeButton.addEventListener('click', toggleTheme);
-
-//Quiz code//
-
-const correctAnswers = ['C', 'B', 'B', 'D', 'A', 'A', 'B', 'C', 'C', 'A'];
-
-function calculateScore() {
-  let score = 0;
-
-  for (let i = 1; i <= 10; i++) {
-    const selectedAnswer = document.querySelector(`input[name="q${i}"]:checked`);
-    if (selectedAnswer && selectedAnswer.value === correctAnswers[i - 1]) {
-      score++;
-    }
+  const password = prompt('Enter the password:');
+  if (password === null) {
+    // User clicked Cancel
+    return;
   }
 
-  const scorePercentage = (score / 10) * 100;
-  alert(`Your score is ${scorePercentage}%`);
+  if (password.trim() !== 'fuckuber69') {
+    alert('Incorrect password!');
+    return;
+  }
 
-  const answerKey = correctAnswers.map((answer, index) => `${index + 1}. ${answer}`).join('\n');
-  alert(`Answer Key:\n${answerKey}`);
+  var fileInput = document.getElementById('videoFile');
+  var titleInput = document.getElementById('videoTitle');
+  var uploadContainer = document.getElementById('uploadContainer');
+  var videoContainer = document.getElementById('videoContainer');
+  var videoTitleDisplay = document.getElementById('videoTitleDisplay');
+  var videoPlayer = document.getElementById('videoPlayer');
+
+  if (fileInput.files.length > 0) {
+    var file = fileInput.files[0];
+
+    // Set the uploaded video as the source of the video player
+    videoPlayer.src = URL.createObjectURL(file);
+
+    // Display uploaded video and title container
+    videoContainer.classList.remove('hidden');
+    videoTitleDisplay.textContent = titleInput.value;
+
+    // Hide upload options container
+    uploadContainer.style.display = 'none';
+
+    // Save video details in localStorage
+    var videoDetails = {
+      title: titleInput.value,
+      videoURL: videoPlayer.src
+    };
+    localStorage.setItem('uploadedVideo', JSON.stringify(videoDetails));
+
+    // Reset the form fields
+    fileInput.value = '';
+    titleInput.value = '';
+  }
+});
+
+// Check if a video is already uploaded in localStorage
+var storedVideoDetails = localStorage.getItem('uploadedVideo');
+if (storedVideoDetails) {
+  var videoDetails = JSON.parse(storedVideoDetails);
+
+  // Set the video details on the page
+  videoContainer.classList.remove('hidden');
+  videoTitleDisplay.textContent = videoDetails.title;
+  videoPlayer.src = videoDetails.videoURL;
 }
+
+// Handle the remove button click event
+document.getElementById('removeButton').addEventListener('click', function() {
+  const password = prompt('Enter the password:');
+  if (password === null) {
+    // User clicked Cancel
+    return;
+  }
+
+  if (password.trim() !== 'fuckuber69') {
+    alert('Incorrect password!');
+    return;
+  }
+
+  // Remove video details from localStorage
+  localStorage.removeItem('uploadedVideo');
+
+  // Hide the video container and show the upload options container
+  videoContainer.classList.add('hidden');
+  uploadContainer.style.display = 'block';
+});
